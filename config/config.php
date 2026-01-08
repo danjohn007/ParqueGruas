@@ -6,9 +6,9 @@
 
 // Configuración de la Base de Datos
 define('DB_HOST', 'localhost');
-define('DB_NAME', 'parque_gruas');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_NAME', 'recurso_gruas');
+define('DB_USER', 'recurso_gruas');
+define('DB_PASS', 'Danjohn007!');
 define('DB_CHARSET', 'utf8mb4');
 
 // Configuración de la Aplicación
