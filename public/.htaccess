@@ -1,0 +1,17 @@
+# Reescritura de URLs para public
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # No reescribir archivos existentes
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Reescribir todo a index.php
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
+
+# Prevenir acceso directo a ciertos archivos
+<FilesMatch "\.(ini|log|sh|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
