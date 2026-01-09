@@ -18,6 +18,14 @@ Sistema completo de gestión para parques de grúas (corralones) desarrollado en
 - **Reportes** - Generación de reportes y estadísticas
 - **Calendario** - Programación de mantenimientos e inspecciones
 - **Usuarios** - Gestión de usuarios con roles (admin, operador, visualizador)
+- **Configuración** - Módulo de configuración del sistema (solo admin)
+  - Nombre del sitio y logotipo
+  - Configuración de correo electrónico (SMTP)
+  - Teléfonos de contacto y horarios de atención
+  - Personalización de colores del sistema
+  - Integración con PayPal
+  - API para generación de códigos QR
+  - Configuraciones globales del sistema
 - **API HikVision** - Integración con dispositivos de videovigilancia
 
 ### Tecnologías Utilizadas
@@ -117,7 +125,11 @@ EXIT;
 
 4. Importar el esquema y datos de ejemplo:
 ```bash
+# Versión básica con datos de ejemplo
 mysql -u root -p parque_gruas < sql/parque_gruas.sql
+
+# O versión extendida con más datos de ejemplo (recomendado)
+mysql -u root -p parque_gruas < sql/parque_gruas_extended.sql
 ```
 
 ### Paso 4: Configurar Credenciales
@@ -171,7 +183,7 @@ http://tu-dominio/
 - **Usuario**: `admin`
 - **Contraseña**: `admin123`
 
-**⚠️ IMPORTANTE**: Cambiar la contraseña del administrador inmediatamente después del primer acceso.
+**⚠️ IMPORTANTE**: Cambiar la contraseña del administrador inmediatamente después del primer acceso en la sección de Perfil de Usuario.
 
 ## 📂 Estructura del Proyecto
 
@@ -184,7 +196,9 @@ ParqueGruas/
 │   │   ├── DashboardController.php
 │   │   ├── VehiclesController.php
 │   │   ├── ImpoundsController.php
+│   │   ├── CranesController.php
 │   │   ├── PaymentsController.php
+│   │   ├── SettingsController.php
 │   │   └── CalendarController.php
 │   ├── models/               # Modelos de datos
 │   │   ├── Model.php         # Modelo base
@@ -192,14 +206,18 @@ ParqueGruas/
 │   │   ├── Vehicle.php
 │   │   ├── Crane.php
 │   │   ├── Impound.php
-│   │   └── Payment.php
+│   │   ├── Payment.php
+│   │   └── Setting.php
 │   └── views/                # Vistas
 │       ├── layouts/          # Plantillas
 │       ├── auth/             # Login/Logout
 │       ├── dashboard/        # Panel principal
 │       ├── vehicles/         # Vehículos
+│       ├── cranes/           # Grúas
+│       ├── users/            # Usuarios
 │       ├── impounds/         # Corralón
 │       ├── payments/         # Pagos
+│       ├── settings/         # Configuración
 │       └── calendar/         # Calendario
 ├── config/
 │   ├── config.php            # Configuración general
@@ -213,7 +231,8 @@ ParqueGruas/
 │   ├── js/                   # JavaScript personalizado
 │   └── assets/               # Imágenes y recursos
 ├── sql/
-│   └── parque_gruas.sql      # Esquema de base de datos
+│   ├── parque_gruas.sql          # Esquema básico con datos de ejemplo
+│   └── parque_gruas_extended.sql # Esquema con datos extendidos (recomendado)
 ├── logs/                     # Archivos de log
 ├── .htaccess                 # Reescritura raíz
 ├── .gitignore
@@ -275,7 +294,7 @@ Para configurar dispositivos, acceder a: `Admin > API HikVision`
 
 ## 📊 Datos de Ejemplo
 
-El sistema incluye datos de ejemplo del estado de Querétaro:
+### Versión Básica (parque_gruas.sql)
 - 3 usuarios (admin, 2 operadores)
 - 5 grúas operativas
 - 8 vehículos registrados
@@ -283,6 +302,16 @@ El sistema incluye datos de ejemplo del estado de Querétaro:
 - 3 pagos procesados
 - 4 dispositivos HikVision
 - Eventos de calendario
+
+### Versión Extendida (parque_gruas_extended.sql) - **Recomendado**
+- 5 usuarios (admin, 3 operadores, 1 visualizador)
+- 8 grúas operativas
+- 20 vehículos registrados con información completa
+- 15 registros de corralón con diferentes estados
+- 4 pagos procesados
+- 6 dispositivos HikVision
+- Múltiples eventos de calendario
+- Configuraciones del sistema preestablecidas
 
 ## 🛠️ Solución de Problemas
 
