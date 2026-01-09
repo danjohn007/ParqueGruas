@@ -11,9 +11,26 @@ class Router {
     public function __construct() {
         $url = $this->parseUrl();
         
-        // Si no hay URL, usar el controlador por defecto
-        if (empty($url)) {
+        // Manejar rutas especiales de autenticación
+        if (!empty($url) && in_array($url[0], ['login', 'logout'])) {
+            $this->controller = 'AuthController';
+            $this->method = $url[0];
+            unset($url[0]);
+            $this->params = $url ? array_values($url) : [];
             $this->loadController();
+            call_user_func_array([$this->controller, $this->method], $this->params);
+            return;
+        }
+        
+        // Si no hay URL, verificar si el usuario está autenticado
+        if (empty($url)) {
+            // Si no está autenticado, redirigir a login
+            if (!isset($_SESSION['user_id'])) {
+                $this->controller = 'AuthController';
+                $this->method = 'login';
+            }
+            $this->loadController();
+            call_user_func_array([$this->controller, $this->method], $this->params);
             return;
         }
         
