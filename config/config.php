@@ -18,11 +18,6 @@ define('APP_VERSION', '1.0.0');
 // Zona horaria
 date_default_timezone_set('America/Mexico_City');
 
-// Configuración de sesiones
-ini_set('session.cookie_httponly', 1);
-ini_set('session.use_only_cookies', 1);
-ini_set('session.cookie_secure', 0); // Cambiar a 1 si se usa HTTPS
-
 // Mostrar errores en desarrollo (cambiar a 0 en producción)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
