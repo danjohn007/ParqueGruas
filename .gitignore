@@ -1,0 +1,30 @@
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Environment files
+.env
+.env.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Vendor (if using composer)
+vendor/
+
+# Uploaded files (optional - comment out if needed)
+# public/uploads/*
+# !public/uploads/.gitkeep
