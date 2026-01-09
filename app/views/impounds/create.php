@@ -7,7 +7,7 @@
             <h3 class="text-lg font-semibold text-blue-900 mb-2">
                 <i class="fas fa-barcode mr-2"></i>Folio de Registro
             </h3>
-            <p class="text-2xl font-bold text-blue-700"><?php echo $nextFolio; ?></p>
+            <p class="text-2xl font-bold text-blue-700"><?php echo htmlspecialchars($nextFolio); ?></p>
         </div>
 
         <!-- Selección o Registro de Vehículo -->

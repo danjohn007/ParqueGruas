@@ -9,13 +9,13 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Desde</label>
-                <input type="date" name="date_from" value="<?php echo $dateFrom; ?>"
+                <input type="date" name="date_from" value="<?php echo htmlspecialchars($dateFrom); ?>"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
             
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fecha Hasta</label>
-                <input type="date" name="date_to" value="<?php echo $dateTo; ?>"
+                <input type="date" name="date_to" value="<?php echo htmlspecialchars($dateTo); ?>"
                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
             </div>
             
