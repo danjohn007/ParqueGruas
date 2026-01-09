@@ -109,7 +109,7 @@
                     <?php foreach ($vehicles as $vehicle): ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <a href="<?php echo BASE_URL; ?>/vehicles/view/<?php echo $vehicle['id']; ?>" 
+                                <a href="<?php echo BASE_URL; ?>/vehicles/details/<?php echo $vehicle['id']; ?>" 
                                    class="text-blue-600 hover:text-blue-800 font-medium">
                                     <?php echo htmlspecialchars($vehicle['plate']); ?>
                                 </a>
@@ -141,7 +141,7 @@
                                 <?php echo htmlspecialchars($vehicle['owner_name']); ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="<?php echo BASE_URL; ?>/vehicles/view/<?php echo $vehicle['id']; ?>" 
+                                <a href="<?php echo BASE_URL; ?>/vehicles/details/<?php echo $vehicle['id']; ?>" 
                                    class="text-blue-600 hover:text-blue-900 mr-3" 
                                    title="Ver detalles">
                                     <i class="fas fa-eye"></i>

@@ -28,7 +28,7 @@ class CranesController extends Controller {
     }
     
     // Ver detalle
-    public function view($id) {
+    public function details($id) {
         $this->requireAuth();
         
         $craneModel = $this->model('Crane');
@@ -188,7 +188,7 @@ class CranesController extends Controller {
         
         if ($craneModel->update($id, $data)) {
             $_SESSION['success'] = 'Grúa actualizada exitosamente';
-            $this->redirect('/cranes/view/' . $id);
+            $this->redirect('/cranes/details/' . $id);
         } else {
             $_SESSION['error'] = 'Error al actualizar la grúa';
             $this->redirect('/cranes/edit/' . $id);

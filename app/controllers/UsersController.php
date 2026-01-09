@@ -34,7 +34,7 @@ class UsersController extends Controller {
     }
     
     // Ver detalle de usuario
-    public function view($id) {
+    public function details($id) {
         $this->requireAuth();
         
         if ($_SESSION['role'] !== 'admin' && $_SESSION['user_id'] != $id) {
@@ -201,7 +201,7 @@ class UsersController extends Controller {
                 $_SESSION['email'] = $data['email'];
             }
             
-            $this->redirect('/users/view/' . $id);
+            $this->redirect('/users/details/' . $id);
         } else {
             $_SESSION['error'] = 'Error al actualizar el usuario';
             $this->redirect('/users/edit/' . $id);

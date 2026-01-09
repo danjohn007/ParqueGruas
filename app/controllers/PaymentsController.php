@@ -45,7 +45,7 @@ class PaymentsController extends Controller {
             
             if ($impound['paid']) {
                 $_SESSION['warning'] = 'Este registro ya tiene un pago registrado';
-                $this->redirect('/impounds/view/' . $impoundId);
+                $this->redirect('/impounds/details/' . $impoundId);
             }
         } else {
             $impound = null;
@@ -104,7 +104,7 @@ class PaymentsController extends Controller {
         
         if ($impound['paid']) {
             $_SESSION['error'] = 'Este registro ya tiene un pago registrado';
-            $this->redirect('/impounds/view/' . $impoundId);
+            $this->redirect('/impounds/details/' . $impoundId);
         }
         
         // Registrar el pago
@@ -113,7 +113,7 @@ class PaymentsController extends Controller {
         
         if ($paymentId) {
             $_SESSION['success'] = 'Pago registrado exitosamente. El vehículo ha sido liberado.';
-            $this->redirect('/payments/view/' . $paymentId);
+            $this->redirect('/payments/details/' . $paymentId);
         } else {
             $_SESSION['error'] = 'Error al registrar el pago';
             $this->redirect('/payments/create/' . $impoundId);
@@ -121,7 +121,7 @@ class PaymentsController extends Controller {
     }
     
     // Ver detalle de pago
-    public function view($id) {
+    public function details($id) {
         $this->requireAuth();
         
         $paymentModel = $this->model('Payment');
