@@ -75,7 +75,9 @@
             <i class="fas fa-chart-line text-blue-500 mr-2"></i>
             Ingresos de la Última Semana
         </h3>
-        <canvas id="revenueChart" height="250"></canvas>
+        <div style="position: relative; height: 250px;">
+            <canvas id="revenueChart"></canvas>
+        </div>
     </div>
     
     <!-- Gráfica de Estado de Grúas -->
@@ -84,7 +86,9 @@
             <i class="fas fa-chart-pie text-green-500 mr-2"></i>
             Estado de Grúas
         </h3>
-        <canvas id="cranesChart" height="250"></canvas>
+        <div style="position: relative; height: 250px;">
+            <canvas id="cranesChart"></canvas>
+        </div>
     </div>
 </div>
 
@@ -135,7 +139,7 @@
                     <?php foreach ($recentImpounds as $impound): ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600">
-                                <a href="<?php echo BASE_URL; ?>/impounds/view/<?php echo $impound['id']; ?>">
+                                <a href="<?php echo BASE_URL; ?>/impounds/details/<?php echo $impound['id']; ?>">
                                     <?php echo $impound['folio']; ?>
                                 </a>
                             </td>

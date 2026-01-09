@@ -28,7 +28,7 @@
                 <?php foreach ($users as $user): ?>
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4 whitespace-nowrap">
-                            <a href="<?php echo BASE_URL; ?>/users/view/<?php echo $user['id']; ?>" 
+                            <a href="<?php echo BASE_URL; ?>/users/details/<?php echo $user['id']; ?>" 
                                class="text-blue-600 hover:text-blue-800 font-medium">
                                 <?php echo htmlspecialchars($user['username']); ?>
                             </a>
@@ -75,7 +75,7 @@
                             <?php echo date('d/m/Y', strtotime($user['created_at'])); ?>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <a href="<?php echo BASE_URL; ?>/users/view/<?php echo $user['id']; ?>" 
+                            <a href="<?php echo BASE_URL; ?>/users/details/<?php echo $user['id']; ?>" 
                                class="text-blue-600 hover:text-blue-900 mr-3" 
                                title="Ver perfil">
                                 <i class="fas fa-eye"></i>

@@ -37,7 +37,7 @@ class VehiclesController extends Controller {
     }
     
     // Ver detalle de vehículo
-    public function view($id) {
+    public function details($id) {
         $this->requireAuth();
         
         $vehicleModel = $this->model('Vehicle');
@@ -187,7 +187,7 @@ class VehiclesController extends Controller {
         
         if ($vehicleModel->update($id, $data)) {
             $_SESSION['success'] = 'Vehículo actualizado exitosamente';
-            $this->redirect('/vehicles/view/' . $id);
+            $this->redirect('/vehicles/details/' . $id);
         } else {
             $_SESSION['error'] = 'Error al actualizar el vehículo';
             $this->redirect('/vehicles/edit/' . $id);

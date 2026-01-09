@@ -98,7 +98,7 @@
                     <?php foreach ($impounds as $impound): ?>
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <a href="<?php echo BASE_URL; ?>/impounds/view/<?php echo $impound['id']; ?>" 
+                                <a href="<?php echo BASE_URL; ?>/impounds/details/<?php echo $impound['id']; ?>" 
                                    class="text-blue-600 hover:text-blue-800 font-medium">
                                     <?php echo htmlspecialchars($impound['folio']); ?>
                                 </a>
@@ -151,7 +151,7 @@
                                 <?php endif; ?>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href="<?php echo BASE_URL; ?>/impounds/view/<?php echo $impound['id']; ?>" 
+                                <a href="<?php echo BASE_URL; ?>/impounds/details/<?php echo $impound['id']; ?>" 
                                    class="text-blue-600 hover:text-blue-900 mr-3" 
                                    title="Ver detalles">
                                     <i class="fas fa-eye"></i>

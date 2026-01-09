@@ -49,7 +49,7 @@ class ImpoundsController extends Controller {
     }
     
     // Ver detalle
-    public function view($id) {
+    public function details($id) {
         $this->requireAuth();
         
         $impoundModel = $this->model('Impound');
@@ -195,12 +195,12 @@ class ImpoundsController extends Controller {
         
         if ($impound['status'] === 'released') {
             $_SESSION['warning'] = 'El vehículo ya fue liberado';
-            $this->redirect('/impounds/view/' . $id);
+            $this->redirect('/impounds/details/' . $id);
         }
         
         if (!$impound['paid']) {
             $_SESSION['error'] = 'No se puede liberar el vehículo sin haber registrado el pago';
-            $this->redirect('/impounds/view/' . $id);
+            $this->redirect('/impounds/details/' . $id);
         }
         
         $updateData = [
@@ -214,7 +214,7 @@ class ImpoundsController extends Controller {
             $_SESSION['error'] = 'Error al liberar el vehículo';
         }
         
-        $this->redirect('/impounds/view/' . $id);
+        $this->redirect('/impounds/details/' . $id);
     }
     
     // API: Buscar por folio (para integraciones)
