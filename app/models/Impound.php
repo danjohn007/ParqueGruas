@@ -206,4 +206,17 @@ class Impound extends Model {
         $stmt->execute([$dateFrom, $dateTo]);
         return $stmt->fetchAll();
     }
+    
+    // Obtener historial de impounds de un vehículo
+    public function getByVehicleId($vehicleId) {
+        $stmt = $this->db->prepare("
+            SELECT i.*, c.crane_number, c.driver_name
+            FROM {$this->table} i
+            LEFT JOIN cranes c ON i.crane_id = c.id
+            WHERE i.vehicle_id = ?
+            ORDER BY i.impound_date DESC
+        ");
+        $stmt->execute([$vehicleId]);
+        return $stmt->fetchAll();
+    }
 }
