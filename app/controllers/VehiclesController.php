@@ -51,15 +51,7 @@ class VehiclesController extends Controller {
         }
         
         // Obtener historial de impounds del vehículo
-        $stmt = $impoundModel->db->prepare("
-            SELECT i.*, c.crane_number, c.driver_name
-            FROM impounds i
-            LEFT JOIN cranes c ON i.crane_id = c.id
-            WHERE i.vehicle_id = ?
-            ORDER BY i.impound_date DESC
-        ");
-        $stmt->execute([$id]);
-        $impoundHistory = $stmt->fetchAll();
+        $impoundHistory = $impoundModel->getByVehicleId($id);
         
         $data = [
             'title' => 'Detalle de Vehículo',
