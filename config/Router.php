@@ -23,12 +23,14 @@ class Router {
         }
         
         // Si no hay URL, verificar si el usuario está autenticado
+        // Nota: session_start() debe haberse llamado antes (ver public/index.php)
         if (empty($url)) {
-            // Si no está autenticado, redirigir a login
+            // Si no está autenticado, mostrar login
             if (!isset($_SESSION['user_id'])) {
                 $this->controller = 'AuthController';
                 $this->method = 'login';
             }
+            // Si está autenticado, usar controlador por defecto (DashboardController)
             $this->loadController();
             call_user_func_array([$this->controller, $this->method], $this->params);
             return;
