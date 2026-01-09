@@ -94,6 +94,11 @@ class SettingsController extends Controller {
         // Update each setting
         $success = true;
         foreach ($settingsToUpdate as $key => $data) {
+            // Skip empty password/secret fields to preserve existing values
+            if (in_array($key, ['smtp_password', 'paypal_secret']) && empty($data['value'])) {
+                continue;
+            }
+            
             if (!$settingModel->setSetting($key, $data['value'], $data['description'])) {
                 $success = false;
                 break;

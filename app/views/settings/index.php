@@ -81,9 +81,10 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña SMTP</label>
                     <input type="password" name="smtp_password" 
-                           value="<?php echo htmlspecialchars($settings['smtp_password'] ?? ''); ?>"
+                           value=""
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                           placeholder="••••••••">
+                           placeholder="Dejar en blanco para mantener actual">
+                    <p class="text-xs text-gray-500 mt-1">Por seguridad, la contraseña actual no se muestra</p>
                 </div>
             </div>
         </div>
@@ -216,9 +217,10 @@
                 <div class="md:col-span-2">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Secret Key</label>
                     <input type="password" name="paypal_secret" 
-                           value="<?php echo htmlspecialchars($settings['paypal_secret'] ?? ''); ?>"
+                           value=""
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                           placeholder="Secret Key de PayPal">
+                           placeholder="Dejar en blanco para mantener actual">
+                    <p class="text-xs text-gray-500 mt-1">Por seguridad, el secret actual no se muestra</p>
                 </div>
             </div>
         </div>

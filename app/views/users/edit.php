@@ -15,6 +15,7 @@
                            value="<?php echo htmlspecialchars($user['username']); ?>"
                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                            placeholder="Nombre de usuario">
+                    <p class="text-xs text-gray-500 mt-1">Cambiar el nombre de usuario puede afectar el acceso al sistema</p>
                 </div>
                 
                 <div>

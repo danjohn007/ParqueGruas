@@ -11,7 +11,7 @@
                 </p>
             </div>
             <div>
-                <?php if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $user['id']): ?>
+                <?php if ($_SESSION['role'] === 'admin' || (int)$_SESSION['user_id'] === (int)$user['id']): ?>
                 <a href="<?php echo BASE_URL; ?>/users/edit/<?php echo $user['id']; ?>" 
                    class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition inline-block">
                     <i class="fas fa-edit mr-2"></i>Editar
@@ -174,7 +174,7 @@
 
     <!-- Botones de Acción -->
     <div class="flex gap-4">
-        <?php if ($_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $user['id']): ?>
+        <?php if ($_SESSION['role'] === 'admin' || (int)$_SESSION['user_id'] === (int)$user['id']): ?>
         <a href="<?php echo BASE_URL; ?>/users/edit/<?php echo $user['id']; ?>" 
            class="bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition shadow-lg">
             <i class="fas fa-edit mr-2"></i>Editar Usuario
