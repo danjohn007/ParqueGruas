@@ -24,17 +24,17 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                         onchange="updatePaymentDetails()">
                     <option value="">-- Seleccione un folio --</option>
-                    <?php foreach ($unpaidImpounds as $impound): ?>
-                        <option value="<?php echo $impound['id']; ?>"
-                                data-folio="<?php echo htmlspecialchars($impound['folio']); ?>"
-                                data-plate="<?php echo htmlspecialchars($impound['plate']); ?>"
-                                data-owner="<?php echo htmlspecialchars($impound['owner_name']); ?>"
-                                data-amount="<?php echo $impound['total_amount']; ?>"
-                                <?php echo ($impound && $impound['id'] == $impound['id']) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($impound['folio']); ?> - 
-                            <?php echo htmlspecialchars($impound['plate']); ?> - 
-                            <?php echo htmlspecialchars($impound['owner_name']); ?> - 
-                            $<?php echo number_format($impound['total_amount'], 2); ?>
+                    <?php foreach ($unpaidImpounds as $unpaidImpound): ?>
+                        <option value="<?php echo $unpaidImpound['id']; ?>"
+                                data-folio="<?php echo htmlspecialchars($unpaidImpound['folio']); ?>"
+                                data-plate="<?php echo htmlspecialchars($unpaidImpound['plate']); ?>"
+                                data-owner="<?php echo htmlspecialchars($unpaidImpound['owner_name']); ?>"
+                                data-amount="<?php echo $unpaidImpound['total_amount']; ?>"
+                                <?php echo ($impound && $impound['id'] == $unpaidImpound['id']) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($unpaidImpound['folio']); ?> - 
+                            <?php echo htmlspecialchars($unpaidImpound['plate']); ?> - 
+                            <?php echo htmlspecialchars($unpaidImpound['owner_name']); ?> - 
+                            $<?php echo number_format($unpaidImpound['total_amount'], 2); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
