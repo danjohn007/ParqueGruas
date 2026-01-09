@@ -120,6 +120,12 @@
                         <span class="ml-3">Usuarios</span>
                     </a>
                     
+                    <a href="<?php echo BASE_URL; ?>/settings" 
+                       class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:text-blue-600">
+                        <i class="fas fa-cog w-6"></i>
+                        <span class="ml-3">Configuración</span>
+                    </a>
+                    
                     <a href="<?php echo BASE_URL; ?>/api" 
                        class="sidebar-link flex items-center px-6 py-3 text-gray-700 hover:text-blue-600">
                         <i class="fas fa-plug w-6"></i>
