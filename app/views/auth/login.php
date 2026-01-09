@@ -77,13 +77,6 @@
             </form>
         </div>
         
-        <!-- Credenciales por defecto -->
-        <div class="mt-6 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg p-4 text-white text-sm">
-            <p class="font-semibold mb-2"><i class="fas fa-info-circle mr-2"></i>Credenciales por defecto:</p>
-            <p><strong>Usuario:</strong> admin</p>
-            <p><strong>Contraseña:</strong> admin123</p>
-        </div>
-        
         <!-- Footer -->
         <div class="mt-8 text-center text-white text-sm">
             <p>&copy; <?php echo date('Y'); ?> Parque de Grúas. Todos los derechos reservados.</p>
