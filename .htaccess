@@ -5,13 +5,8 @@
     
     # Redirigir todo lo que no esté en public/ a public/
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ /public/$1 [L]
+    RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
-
-# Prevenir listado de directorios
-Options -Indexes
 
 # Configuración de seguridad
 <IfModule mod_headers.c>
