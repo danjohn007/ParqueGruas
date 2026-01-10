@@ -28,7 +28,7 @@ class AuthController extends Controller {
         $password = $_POST['password'] ?? '';
         
         if (empty($username) || empty($password)) {
-            $_SESSION['error'] = 'Por favor ingrese usuario y contraseña';
+            $_SESSION['error'] = 'Por favor ingrese usuario/correo y contraseña';
             $this->redirect('/login');
         }
         
@@ -46,7 +46,7 @@ class AuthController extends Controller {
             $_SESSION['success'] = '¡Bienvenido ' . $user['full_name'] . '!';
             $this->redirect('/dashboard');
         } else {
-            $_SESSION['error'] = 'Usuario o contraseña incorrectos';
+            $_SESSION['error'] = 'Usuario/correo o contraseña incorrectos';
             $this->redirect('/login');
         }
     }

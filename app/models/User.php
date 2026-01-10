@@ -9,9 +9,10 @@ class User extends Model {
     protected $table = 'users';
     
     // Autenticar usuario
-    public function authenticate($username, $password) {
-        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE username = ? AND status = 'active'");
-        $stmt->execute([$username]);
+    public function authenticate($usernameOrEmail, $password) {
+        // Permitir login con username o email
+        $stmt = $this->db->prepare("SELECT * FROM {$this->table} WHERE (username = ? OR email = ?) AND status = 'active'");
+        $stmt->execute([$usernameOrEmail, $usernameOrEmail]);
         $user = $stmt->fetch();
         
         if ($user && password_verify($password, $user['password'])) {

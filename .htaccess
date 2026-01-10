@@ -5,7 +5,9 @@
     
     # Redirigir a public si no está en public
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ public/$1 [L,QSA]
 </IfModule>
 
 # Prevenir listado de directorios
