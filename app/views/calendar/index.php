@@ -4,6 +4,65 @@
     <div id="calendar"></div>
 </div>
 
+<!-- Modal para ver detalles del evento -->
+<div id="viewEventModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Detalles del Evento</h3>
+                <button onclick="closeViewEventModal()" class="text-gray-400 hover:text-gray-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Título</label>
+                    <p id="viewEventTitle" class="text-base text-gray-900 font-semibold"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Tipo</label>
+                    <p id="viewEventType" class="text-base text-gray-900"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Descripción</label>
+                    <p id="viewEventDescription" class="text-base text-gray-900"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Fecha/Hora Inicio</label>
+                    <p id="viewEventStart" class="text-base text-gray-900"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Fecha/Hora Fin</label>
+                    <p id="viewEventEnd" class="text-base text-gray-900"></p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-500 mb-1">Ubicación</label>
+                    <p id="viewEventLocation" class="text-base text-gray-900"></p>
+                </div>
+            </div>
+            
+            <div class="flex justify-end gap-2 mt-6">
+                <button type="button" onclick="deleteEventFromView()" 
+                        class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <i class="fas fa-trash mr-1"></i> Eliminar
+                </button>
+                <button type="button" onclick="editEventFromView()" 
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <i class="fas fa-edit mr-1"></i> Editar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Modal para crear/editar eventos -->
 <div id="eventModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
     <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
@@ -111,11 +170,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Al hacer clic en un evento existente
         eventClick: function(info) {
-            if (confirm('¿Desea eliminar este evento?')) {
-                if (deleteEvent(info.event.id)) {
-                    info.event.remove();
-                }
-            }
+            showEventDetails(info.event);
         },
         
         // Al mover un evento
@@ -167,6 +222,116 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function closeEventModal() {
     document.getElementById('eventModal').classList.add('hidden');
+}
+
+function closeViewEventModal() {
+    document.getElementById('viewEventModal').classList.add('hidden');
+}
+
+// Variable global para almacenar el evento actual
+let currentViewEvent = null;
+
+function showEventDetails(event) {
+    currentViewEvent = event;
+    
+    // Llenar los datos del modal de visualización
+    document.getElementById('viewEventTitle').textContent = event.title || 'Sin título';
+    
+    // Traducir el tipo de evento
+    const typeTranslations = {
+        'maintenance': 'Mantenimiento',
+        'inspection': 'Inspección',
+        'meeting': 'Reunión',
+        'training': 'Capacitación',
+        'other': 'Otro'
+    };
+    document.getElementById('viewEventType').textContent = typeTranslations[event.extendedProps.type] || 'Otro';
+    
+    document.getElementById('viewEventDescription').textContent = event.extendedProps.description || 'Sin descripción';
+    
+    // Formatear fechas
+    const startDate = new Date(event.start);
+    const endDate = event.end ? new Date(event.end) : startDate;
+    
+    const dateOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    };
+    
+    document.getElementById('viewEventStart').textContent = startDate.toLocaleDateString('es-ES', dateOptions);
+    document.getElementById('viewEventEnd').textContent = endDate.toLocaleDateString('es-ES', dateOptions);
+    
+    document.getElementById('viewEventLocation').textContent = event.extendedProps.location || 'Sin ubicación';
+    
+    // Mostrar el modal
+    document.getElementById('viewEventModal').classList.remove('hidden');
+}
+
+function editEventFromView() {
+    if (!currentViewEvent) return;
+    
+    // Cerrar el modal de visualización
+    closeViewEventModal();
+    
+    // Abrir el modal de edición con los datos del evento
+    document.getElementById('modalTitle').textContent = 'Editar Evento';
+    document.getElementById('eventId').value = currentViewEvent.id;
+    document.getElementById('eventTitle').value = currentViewEvent.title;
+    document.getElementById('eventDescription').value = currentViewEvent.extendedProps.description || '';
+    document.getElementById('eventType').value = currentViewEvent.extendedProps.type || 'other';
+    document.getElementById('eventLocation').value = currentViewEvent.extendedProps.location || '';
+    document.getElementById('eventAllDay').checked = currentViewEvent.allDay;
+    
+    // Formatear fechas para datetime-local input
+    const startDate = new Date(currentViewEvent.start);
+    const endDate = currentViewEvent.end ? new Date(currentViewEvent.end) : startDate;
+    
+    document.getElementById('eventStart').value = formatDateTimeLocal(startDate);
+    document.getElementById('eventEnd').value = formatDateTimeLocal(endDate);
+    
+    document.getElementById('eventModal').classList.remove('hidden');
+}
+
+function deleteEventFromView() {
+    if (!currentViewEvent) return;
+    
+    if (confirm('¿Está seguro de que desea eliminar este evento?')) {
+        deleteEvent(currentViewEvent.id).then(success => {
+            if (success) {
+                currentViewEvent.remove();
+                closeViewEventModal();
+                showNotification('Evento eliminado exitosamente', 'success');
+            } else {
+                showNotification('Error al eliminar el evento', 'error');
+            }
+        });
+    }
+}
+
+function formatDateTimeLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
+function showNotification(message, type) {
+    // Simple notification - could be enhanced with a better UI component
+    const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }
 
 function getColorForType(type) {

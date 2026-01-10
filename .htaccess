@@ -3,11 +3,9 @@
     RewriteEngine On
     RewriteBase /
     
-    # Redirigir a public si no está en public
+    # Redirigir todo lo que no esté en public/ a public/
     RewriteCond %{REQUEST_URI} !^/public/
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ public/$1 [L,QSA]
+    RewriteRule ^(.*)$ /public/$1 [L]
 </IfModule>
 
 # Prevenir listado de directorios
