@@ -47,14 +47,14 @@
             <form action="<?php echo BASE_URL; ?>/auth/authenticate" method="POST">
                 <div class="mb-6">
                     <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
-                        <i class="fas fa-user mr-2"></i>Usuario
+                        <i class="fas fa-user mr-2"></i>Usuario o Correo
                     </label>
                     <input type="text" 
                            id="username" 
                            name="username" 
                            required
                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Ingrese su usuario"
+                           placeholder="Ingrese su usuario o correo"
                            autofocus>
                 </div>
                 
