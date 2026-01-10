@@ -295,19 +295,18 @@ function editEventFromView() {
     document.getElementById('eventModal').classList.remove('hidden');
 }
 
-function deleteEventFromView() {
+async function deleteEventFromView() {
     if (!currentViewEvent) return;
     
     if (confirm('¿Está seguro de que desea eliminar este evento?')) {
-        deleteEvent(currentViewEvent.id).then(success => {
-            if (success) {
-                currentViewEvent.remove();
-                closeViewEventModal();
-                showNotification('Evento eliminado exitosamente', 'success');
-            } else {
-                showNotification('Error al eliminar el evento', 'error');
-            }
-        });
+        const success = await deleteEvent(currentViewEvent.id);
+        if (success) {
+            currentViewEvent.remove();
+            closeViewEventModal();
+            showNotification('Evento eliminado exitosamente', 'success');
+        } else {
+            showNotification('Error al eliminar el evento', 'error');
+        }
     }
 }
 
