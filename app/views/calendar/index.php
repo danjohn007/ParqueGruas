@@ -299,13 +299,18 @@ async function deleteEventFromView() {
     if (!currentViewEvent) return;
     
     if (confirm('¿Está seguro de que desea eliminar este evento?')) {
-        const success = await deleteEvent(currentViewEvent.id);
-        if (success) {
-            currentViewEvent.remove();
-            closeViewEventModal();
-            showNotification('Evento eliminado exitosamente', 'success');
-        } else {
-            showNotification('Error al eliminar el evento', 'error');
+        try {
+            const success = await deleteEvent(currentViewEvent.id);
+            if (success) {
+                currentViewEvent.remove();
+                closeViewEventModal();
+                showNotification('Evento eliminado exitosamente', 'success');
+            } else {
+                showNotification('Error al eliminar el evento', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting event:', error);
+            showNotification('Error de conexión al eliminar el evento', 'error');
         }
     }
 }
