@@ -1,5 +1,5 @@
 -- ============================================
--- MIGRACION: Mejoras Sustanciales del Sistema
+-- MIGRACION:  Mejoras Sustanciales del Sistema
 -- Version: 2.0.0
 -- Fecha: 2025-01-14
 -- ============================================
@@ -7,7 +7,7 @@
 -- preservando la estructura y datos existentes
 -- ============================================
 
-USE parque_gruas;
+-- USE parque_gruas; -- Comentar si ya estás en la base de datos correcta
 
 -- ============================================
 -- 1. TABLA DE EMPRESAS (Clientes/Convenios)
@@ -413,13 +413,94 @@ CREATE TABLE IF NOT EXISTS audit_log (
 -- ============================================
 -- 13. ACTUALIZACIÓN DE TABLA DE PAGOS
 -- ============================================
--- Agregar campos para soportar servicios y facturas
-ALTER TABLE payments 
-    ADD COLUMN IF NOT EXISTS service_id INT AFTER impound_id,
-    ADD COLUMN IF NOT EXISTS invoice_id INT AFTER service_id,
-    ADD COLUMN IF NOT EXISTS payment_type ENUM('impound', 'service', 'invoice') DEFAULT 'impound' AFTER payment_method,
-    ADD COLUMN IF NOT EXISTS reference_number VARCHAR(100) AFTER receipt_number,
-    ADD COLUMN IF NOT EXISTS remaining_balance DECIMAL(10,2) DEFAULT 0.00 AFTER amount;
+-- Agregar campos para soportar servicios y facturas usando procedimientos almacenados
+
+-- Verificar y agregar service_id
+SET @dbname = DATABASE();
+SET @tablename = 'payments';
+SET @columnname = 'service_id';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' INT AFTER impound_id')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+-- Verificar y agregar invoice_id
+SET @columnname = 'invoice_id';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' INT AFTER service_id')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+-- Verificar y agregar payment_type
+SET @columnname = 'payment_type';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA. COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' ENUM(\'impound\', \'service\', \'invoice\') DEFAULT \'impound\' AFTER payment_method')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+-- Verificar y agregar reference_number
+SET @columnname = 'reference_number';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA. COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' VARCHAR(100) AFTER receipt_number')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
+
+-- Verificar y agregar remaining_balance
+SET @columnname = 'remaining_balance';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' DECIMAL(10,2) DEFAULT 0.00 AFTER amount')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
 
 -- Agregar foreign keys si no existen
 SET @stmt = (SELECT IF(
@@ -442,18 +523,65 @@ PREPARE stmt FROM @stmt;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
--- Agregar índices
-ALTER TABLE payments
-    ADD INDEX IF NOT EXISTS idx_service_id (service_id),
-    ADD INDEX IF NOT EXISTS idx_invoice_id (invoice_id),
-    ADD INDEX IF NOT EXISTS idx_payment_type (payment_type);
+-- Agregar índices solo si no existen
+SET @stmt = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS 
+     WHERE TABLE_SCHEMA = DATABASE() 
+     AND TABLE_NAME = 'payments' 
+     AND INDEX_NAME = 'idx_service_id') = 0,
+    'CREATE INDEX idx_service_id ON payments(service_id)',
+    'SELECT 1'
+));
+PREPARE stmt FROM @stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @stmt = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS 
+     WHERE TABLE_SCHEMA = DATABASE() 
+     AND TABLE_NAME = 'payments' 
+     AND INDEX_NAME = 'idx_invoice_id') = 0,
+    'CREATE INDEX idx_invoice_id ON payments(invoice_id)',
+    'SELECT 1'
+));
+PREPARE stmt FROM @stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
+
+SET @stmt = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS 
+     WHERE TABLE_SCHEMA = DATABASE() 
+     AND TABLE_NAME = 'payments' 
+     AND INDEX_NAME = 'idx_payment_type') = 0,
+    'CREATE INDEX idx_payment_type ON payments(payment_type)',
+    'SELECT 1'
+));
+PREPARE stmt FROM @stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- ============================================
 -- 14. ACTUALIZACIÓN DE TABLA DE IMPOUNDS
 -- ============================================
 -- Agregar relación con yards
-ALTER TABLE impounds
-    ADD COLUMN IF NOT EXISTS yard_id INT AFTER crane_id;
+
+-- Verificar y agregar yard_id
+SET @tablename = 'impounds';
+SET @columnname = 'yard_id';
+SET @preparedStatement = (SELECT IF(
+  (
+    SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS
+    WHERE
+      (TABLE_NAME = @tablename)
+      AND (TABLE_SCHEMA = @dbname)
+      AND (COLUMN_NAME = @columnname)
+  ) > 0,
+  'SELECT 1',
+  CONCAT('ALTER TABLE ', @tablename, ' ADD COLUMN ', @columnname, ' INT AFTER crane_id')
+));
+PREPARE alterIfNotExists FROM @preparedStatement;
+EXECUTE alterIfNotExists;
+DEALLOCATE PREPARE alterIfNotExists;
 
 SET @stmt = (SELECT IF(
     (SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS 
@@ -465,8 +593,18 @@ PREPARE stmt FROM @stmt;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
 
-ALTER TABLE impounds
-    ADD INDEX IF NOT EXISTS idx_yard_id (yard_id);
+-- Agregar índice solo si no existe
+SET @stmt = (SELECT IF(
+    (SELECT COUNT(*) FROM INFORMATION_SCHEMA.STATISTICS 
+     WHERE TABLE_SCHEMA = DATABASE() 
+     AND TABLE_NAME = 'impounds' 
+     AND INDEX_NAME = 'idx_yard_id') = 0,
+    'CREATE INDEX idx_yard_id ON impounds(yard_id)',
+    'SELECT 1'
+));
+PREPARE stmt FROM @stmt;
+EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
 
 -- ============================================
 -- 15. DATOS INICIALES
@@ -474,7 +612,7 @@ ALTER TABLE impounds
 
 -- Insertar corralón principal (basado en datos actuales)
 INSERT INTO yards (yard_name, address, city, state, capacity, phone, manager_name, status) 
-SELECT 'Corralón Principal Querétaro', 'Av. Constituyentes 1000, Querétaro, Qro.', 'Querétaro', 'Querétaro', 100, '442-123-4567', 'Administrador Sistema', 'active'
+SELECT 'Corralón Principal Querétaro', 'Av.  Constituyentes 1000, Querétaro, Qro.', 'Querétaro', 'Querétaro', 100, '442-123-4567', 'Administrador Sistema', 'active'
 WHERE NOT EXISTS (SELECT 1 FROM yards LIMIT 1);
 
 -- Actualizar impounds existentes para asignarlos al corralón principal
