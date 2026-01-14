@@ -1,15 +1,45 @@
-# Parque de Grúas - Sistema Integral de Gestión
+# Parque de Grúas - Sistema Integral de Gestión v2.0
 
-Sistema completo de gestión para parques de grúas (corralones) desarrollado en PHP puro con arquitectura MVC, diseñado para administrar vehículos infractores, grúas, pagos, reportes y más.
+Sistema completo de gestión para parques de grúas (corralones) desarrollado en PHP puro con arquitectura MVC, diseñado para administrar vehículos infractores, grúas, servicios, facturación, comisiones y más.
 
 ![PHP](https://img.shields.io/badge/PHP-7.4%2B-blue)
 ![MySQL](https://img.shields.io/badge/MySQL-5.7%2B-orange)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-cyan)
 ![License](https://img.shields.io/badge/license-MIT-green)
+![Version](https://img.shields.io/badge/version-2.0.0-success)
+
+## 🆕 Novedades Versión 2.0
+
+La versión 2.0 introduce mejoras sustanciales con nuevos módulos empresariales:
+
+### 🎯 Módulos Nuevos
+- **Empresas** - Gestión completa de clientes corporativos y aliados con datos fiscales
+- **Choferes** - Módulo independiente para operadores (separado de grúas)
+- **Corralones** - Catálogo multi-corralón con control de ocupación
+- **Servicios** - Módulo central para gestión de servicios de grúa
+- **Cotizaciones** - Generación, seguimiento y aceptación de cotizaciones
+- **Facturación Electrónica** - Integración con Facturama (CFDI 4.0)
+- **Carta Porte** - Complemento de transporte para facturación
+- **Comisiones** - Cálculo automático y reportes de comisiones
+- **Taller** - Órdenes de mantenimiento para flota
+- **Auditoría** - Registro de acciones críticas del sistema
+
+### 🔄 Flujo de Trabajo Moderno
+```
+Cotización → Servicio → Asignación → Ejecución → Facturación → Cobro
+```
+
+### 📊 Nuevas Capacidades
+- Facturación electrónica con timbrado SAT
+- Gestión multi-empresa con reportes independientes
+- Cálculo automático de comisiones por chofer/grúa/empresa
+- Control de múltiples corralones
+- Seguimiento completo del ciclo de servicio
+- Exportación avanzada (CSV/Excel)
 
 ## 🚀 Características Principales
 
-### Módulos del Sistema
+### Módulos Base (v1.0)
 - **Dashboard** - Panel de control con estadísticas en tiempo real y gráficas
 - **Gestión de Vehículos** - Alta, baja, búsqueda y registro de vehículos
 - **Corralón** - Control de ingresos, egresos y almacenamiento
@@ -19,14 +49,18 @@ Sistema completo de gestión para parques de grúas (corralones) desarrollado en
 - **Calendario** - Programación de mantenimientos e inspecciones
 - **Usuarios** - Gestión de usuarios con roles (admin, operador, visualizador)
 - **Configuración** - Módulo de configuración del sistema (solo admin)
-  - Nombre del sitio y logotipo
-  - Configuración de correo electrónico (SMTP)
-  - Teléfonos de contacto y horarios de atención
-  - Personalización de colores del sistema
-  - Integración con PayPal
-  - API para generación de códigos QR
-  - Configuraciones globales del sistema
 - **API HikVision** - Integración con dispositivos de videovigilancia
+
+### Módulos Empresariales (v2.0)
+- **Empresas (Companies)** - CRUD completo con datos fiscales, reportes por empresa
+- **Choferes (Drivers)** - Gestión independiente, historial, licencias, comisiones
+- **Corralones (Yards)** - Catálogo, ocupación, reportes de movimientos
+- **Servicios (Services)** - Gestión completa del ciclo de vida del servicio
+- **Cotizaciones (Quotes)** - Generación, PDF, aceptación/rechazo
+- **Facturas (Invoices)** - Integración Facturama, CFDI 4.0, Carta Porte
+- **Comisiones (Commissions)** - Reglas, cálculo automático, cortes, pagos
+- **Taller (Workshop)** - Órdenes de trabajo, refacciones, costos por unidad
+- **Auditoría (Audit Log)** - Trazabilidad de acciones críticas
 
 ### Tecnologías Utilizadas
 - **Backend**: PHP 7.4+ (sin framework)
@@ -45,19 +79,22 @@ Sistema completo de gestión para parques de grúas (corralones) desarrollado en
 - ✅ Sesiones seguras con cookies HTTP-only
 - ✅ Preparación de consultas SQL (PDO) para prevenir inyección SQL
 - ✅ Diseño responsivo para móviles, tablets y escritorio
+- ✅ Integración con Facturama API (CFDI 4.0)
+- ✅ Sistema de auditoría completo
+- ✅ Cálculo automático de comisiones
+- ✅ Soporte multi-corralón
+- ✅ Exportación avanzada (CSV/Excel)
 - ✅ Datos de ejemplo del estado de Querétaro
 
 ## 📋 Requisitos del Sistema
 
 ### Servidor
 - Apache 2.4+ con `mod_rewrite` habilitado
-- PHP 7.4 o superior
+- PHP 7.4 o superior con extensiones:
+  - PDO y PDO_MySQL
+  - mbstring y json
+  - curl (para integración Facturama)
 - MySQL 5.7 o superior
-- Extensiones PHP requeridas:
-  - PDO
-  - PDO_MySQL
-  - mbstring
-  - json
 
 ### Desarrollo/Producción
 - Sistema operativo: Linux, Windows o macOS
@@ -125,12 +162,14 @@ EXIT;
 
 4. Importar el esquema y datos de ejemplo:
 ```bash
-# Versión básica con datos de ejemplo
-mysql -u root -p parque_gruas < sql/parque_gruas.sql
-
-# O versión extendida con más datos de ejemplo (recomendado)
+# INSTALACIÓN NUEVA - Versión 2.0 (recomendado)
 mysql -u root -p parque_gruas < sql/parque_gruas_extended.sql
+
+# Luego aplicar mejoras de v2.0
+mysql -u root -p parque_gruas < sql/migrations/001_system_improvements.sql
 ```
+
+**Para usuarios de v1.0:** Si ya tiene el sistema instalado, consulte [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md) para migrar a v2.0.
 
 ### Paso 4: Configurar Credenciales
 
@@ -199,7 +238,8 @@ ParqueGruas/
 │   │   ├── CranesController.php
 │   │   ├── PaymentsController.php
 │   │   ├── SettingsController.php
-│   │   └── CalendarController.php
+│   │   ├── CalendarController.php
+│   │   └── ReportsController.php
 │   ├── models/               # Modelos de datos
 │   │   ├── Model.php         # Modelo base
 │   │   ├── User.php
@@ -207,7 +247,18 @@ ParqueGruas/
 │   │   ├── Crane.php
 │   │   ├── Impound.php
 │   │   ├── Payment.php
-│   │   └── Setting.php
+│   │   ├── Setting.php
+│   │   ├── Company.php       # 🆕 v2.0
+│   │   ├── Driver.php        # 🆕 v2.0
+│   │   ├── Yard.php          # 🆕 v2.0
+│   │   ├── Service.php       # 🆕 v2.0
+│   │   ├── Quote.php         # 🆕 v2.0
+│   │   ├── Invoice.php       # 🆕 v2.0
+│   │   ├── Commission.php    # 🆕 v2.0
+│   │   ├── WorkshopOrder.php # 🆕 v2.0
+│   │   └── AuditLog.php      # 🆕 v2.0
+│   ├── services/             # 🆕 Servicios de integración
+│   │   └── FacturamaService.php
 │   └── views/                # Vistas
 │       ├── layouts/          # Plantillas
 │       ├── auth/             # Login/Logout
@@ -218,7 +269,8 @@ ParqueGruas/
 │       ├── impounds/         # Corralón
 │       ├── payments/         # Pagos
 │       ├── settings/         # Configuración
-│       └── calendar/         # Calendario
+│       ├── calendar/         # Calendario
+│       └── reports/          # Reportes
 ├── config/
 │   ├── config.php            # Configuración general
 │   ├── Database.php          # Clase de conexión DB
@@ -232,8 +284,11 @@ ParqueGruas/
 │   └── assets/               # Imágenes y recursos
 ├── sql/
 │   ├── parque_gruas.sql          # Esquema básico con datos de ejemplo
-│   └── parque_gruas_extended.sql # Esquema con datos extendidos (recomendado)
+│   ├── parque_gruas_extended.sql # Esquema con datos extendidos (recomendado)
+│   └── migrations/               # 🆕 Migraciones de BD
+│       └── 001_system_improvements.sql
 ├── logs/                     # Archivos de log
+├── MIGRATION_GUIDE.md        # 🆕 Guía de migración v1.0 → v2.0
 ├── .htaccess                 # Reescritura raíz
 ├── .gitignore
 └── README.md
@@ -329,13 +384,257 @@ Para configurar dispositivos, acceder a: `Admin > API HikVision`
 
 ## 🔄 Actualizaciones
 
-Para actualizar el sistema:
+### Migración de v1.0 a v2.0
+
+Si ya tiene el sistema v1.0 instalado, consulte la [Guía de Migración](MIGRATION_GUIDE.md) completa.
+
+**Pasos resumidos:**
+1. Hacer backup de base de datos y archivos
+2. Actualizar código: `git pull origin main`
+3. Ejecutar migración: `mysql -u root -p parque_gruas < sql/migrations/001_system_improvements.sql`
+4. Configurar nuevos módulos en Admin > Configuración
+
+### Actualizaciones futuras
 
 ```bash
 git pull origin main
-# Revisar sql/updates/ para migraciones de base de datos
+# Revisar sql/migrations/ para migraciones de base de datos
 # Limpiar caché si es necesario
 ```
+
+## 🆕 Novedades Versión 2.0 - Guía Completa
+
+### 1. Módulo de Empresas (Companies)
+
+Gestión de clientes corporativos y convenios con datos fiscales completos.
+
+**Características:**
+- CRUD completo de empresas
+- Datos fiscales: RFC, régimen, forma de pago, uso CFDI
+- Reportes independientes por empresa
+- Historial de servicios y facturación
+- Estadísticas de negocio por cliente
+
+**Casos de uso:**
+- Empresas aseguradoras con convenios
+- Gobiernos municipales/estatales
+- Empresas de logística
+- Clientes corporativos frecuentes
+
+### 2. Módulo de Choferes (Drivers)
+
+Gestión independiente de operadores separada del módulo de grúas.
+
+**Características:**
+- Perfil completo: licencia, vigencia, documentación
+- Historial de servicios realizados
+- Cálculo automático de comisiones
+- Alertas de vencimiento de licencias
+- Estadísticas de desempeño
+
+**Beneficios:**
+- Un chofer puede operar múltiples grúas
+- Seguimiento individual de comisiones
+- Control de licencias y documentación
+- Análisis de productividad
+
+### 3. Módulo de Corralones (Yards)
+
+Gestión multi-corralón con control de ocupación y movimientos.
+
+**Características:**
+- Catálogo de múltiples corralones
+- Capacidad y ocupación en tiempo real
+- Reportes de ingresos/egresos
+- Tiempos de permanencia
+- Asignación automática por ubicación
+
+**Casos de uso:**
+- Múltiples ubicaciones de corralones
+- Control de capacidad por sucursal
+- Reportes independientes por corralón
+
+### 4. Módulo de Servicios (Services) - Core
+
+Gestión completa del ciclo de vida de servicios de grúa.
+
+**Flujo de trabajo:**
+```
+1. Solicitud → 2. Cotización → 3. Aceptación → 4. Asignación 
+→ 5. Ejecución → 6. Culminación → 7. Facturación → 8. Cobro
+```
+
+**Características:**
+- Tipos: arrastre, traslado, rescate, auxilio
+- Asignación de chofer y unidad
+- Tracking de origen/destino
+- Cálculo automático de costos
+- Evidencia fotográfica y documentos
+- Estados del servicio con workflow
+
+**Tipos de servicio:**
+- **Arrastre**: Vehículo infractor
+- **Traslado**: Movimiento autorizado
+- **Rescate**: Emergencias en carretera
+- **Auxilio**: Asistencia vial
+
+### 5. Módulo de Cotizaciones (Quotes)
+
+Generación profesional de cotizaciones con seguimiento.
+
+**Características:**
+- Generación automática de folios
+- PDF descargable
+- Vigencia de cotización
+- Estados: pendiente, aceptada, rechazada, vencida
+- Conversión automática a servicio
+
+**Workflow:**
+1. Generar cotización
+2. Enviar al cliente
+3. Cliente acepta/rechaza
+4. Si acepta → se crea servicio automáticamente
+
+### 6. Módulo de Facturación Electrónica (Invoices)
+
+Integración completa con Facturama para CFDI 4.0.
+
+**Características:**
+- Timbrado SAT automático
+- Descarga de PDF y XML
+- Complemento Carta Porte
+- Cancelación de facturas
+- Multi-empresa
+- Pagos parciales
+
+**Configuración Facturama:**
+```
+Admin > Configuración > Facturama API
+- API Key: [tu_api_key]
+- API Secret: [tu_api_secret]
+- Modo: Sandbox (pruebas) / Producción
+```
+
+**Documentación:** https://facturama.mx/api-facturacion-electronica
+
+### 7. Carta Porte (Complemento CFDI)
+
+Cumplimiento con requisitos SAT para traslado de bienes.
+
+**Características:**
+- Integrado en facturación
+- Datos de origen y destino
+- Información del vehículo
+- Permisos SCT
+- Seguros obligatorios
+
+**Cuándo usar:**
+- Traslados de vehículos
+- Servicios que requieren transporte
+- Cumplimiento normativo SAT
+
+### 8. Módulo de Comisiones (Commissions)
+
+Cálculo automático y gestión de comisiones por servicio.
+
+**Tipos de reglas:**
+- Por chofer (% o monto fijo)
+- Por grúa/unidad
+- Por empresa/convenio
+- Por tipo de servicio
+- Reglas generales
+
+**Workflow:**
+1. Servicio culminado → comisión calculada automáticamente
+2. Revisión y aprobación
+3. Corte de comisiones por periodo
+4. Generación de reportes
+5. Registro de pagos
+
+**Reportes:**
+- Comisiones por chofer
+- Cortes quincenales/mensuales
+- Exportación a Excel/CSV
+- Historial de pagos
+
+### 9. Módulo de Taller (Workshop)
+
+Gestión de mantenimiento preventivo y correctivo de flota.
+
+**Características:**
+- Órdenes de trabajo
+- Refacciones y mano de obra
+- Costos por unidad
+- Historial de mantenimientos
+- Alertas preventivas
+
+**Tipos de trabajo:**
+- Preventivo (programado)
+- Correctivo (reparaciones)
+- Emergencia (urgente)
+- Inspección
+
+**Beneficios:**
+- Control de costos de mantenimiento
+- Disponibilidad de flota
+- Frecuencia de fallas
+- Planificación de mantenimientos
+
+### 10. Sistema de Auditoría (Audit Log)
+
+Trazabilidad completa de acciones críticas.
+
+**Registra:**
+- Usuario que realiza la acción
+- Fecha y hora
+- Tipo de acción (crear/editar/eliminar/cancelar)
+- Módulo afectado
+- Valores anteriores y nuevos
+- IP y navegador
+
+**Módulos auditados:**
+- Servicios
+- Facturas
+- Pagos
+- Comisiones
+- Catálogos importantes
+
+## 📊 Reportes Nuevos v2.0
+
+### Servicios
+- Por estado, fecha, empresa, chofer, unidad
+- Exportación CSV/Excel
+- Análisis de rentabilidad
+
+### Facturación
+- Facturas emitidas vs pagadas
+- Por empresa y periodo
+- Pendientes de cobro
+
+### Comisiones
+- Por chofer y periodo
+- Cortes de comisiones
+- Comisiones pagadas vs pendientes
+
+### Taller
+- Costos por unidad
+- Disponibilidad de flota
+- Frecuencia de mantenimientos
+
+### Corralones
+- Ocupación actual
+- Ingresos/egresos
+- Tiempos de permanencia
+- Por corralón
+
+## 🔐 Seguridad v2.0
+
+- ✅ Auditoría completa de acciones críticas
+- ✅ Validación de RFC (Facturama)
+- ✅ Protección de datos fiscales
+- ✅ Control de acceso por roles a nuevos módulos
+- ✅ Logs de integración API (Facturama)
+- ✅ Cifrado de credenciales API
 
 ## 📝 Licencia
 
