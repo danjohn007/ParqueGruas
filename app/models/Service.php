@@ -133,7 +133,13 @@ class Service extends Model {
         
         // Obtener tasa de IVA
         $stmt = $this->db->query("SELECT setting_value FROM system_settings WHERE setting_key = 'default_tax_rate'");
-        $taxRate = floatval($stmt->fetch()['setting_value'] ?? 16.00);
+        $result = $stmt->fetch();
+        
+        if (!$result) {
+            $taxRate = 16.00; // Default fallback
+        } else {
+            $taxRate = floatval($result['setting_value']);
+        }
         
         $baseCost = floatval($service['base_cost']);
         $additionalCharges = floatval($service['additional_charges']);

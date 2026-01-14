@@ -14,11 +14,31 @@ class WorkshopOrder extends Model {
         $prefix = $stmt->fetch()['setting_value'] ?? 'TAL';
         
         $year = date('Y');
-        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM {$this->table} WHERE YEAR(created_at) = ?");
-        $stmt->execute([$year]);
-        $count = $stmt->fetch()['total'] + 1;
         
-        return $prefix . '-' . $year . '-' . str_pad($count, 6, '0', STR_PAD_LEFT);
+        // Use database transaction to prevent race conditions
+        $this->db->beginTransaction();
+        
+        try {
+            // Lock the table to prevent concurrent inserts
+            $stmt = $this->db->prepare("
+                SELECT COUNT(*) as total 
+                FROM {$this->table} 
+                WHERE YEAR(created_at) = ? 
+                FOR UPDATE
+            ");
+            $stmt->execute([$year]);
+            $count = $stmt->fetch()['total'] + 1;
+            
+            $orderNumber = $prefix . '-' . $year . '-' . str_pad($count, 6, '0', STR_PAD_LEFT);
+            
+            $this->db->commit();
+            
+            return $orderNumber;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            // Fallback to timestamp-based unique identifier
+            return $prefix . '-' . $year . '-' . time() . '-' . rand(1000, 9999);
+        }
     }
     
     // Obtener órdenes con detalles

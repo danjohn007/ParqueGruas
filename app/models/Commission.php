@@ -65,7 +65,7 @@ class Commission extends Model {
     }
     
     // Obtener reglas aplicables a un servicio
-    private function getApplicableRules($service) {
+    protected function getApplicableRules($service) {
         $sql = "
             SELECT * FROM commission_rules
             WHERE is_active = TRUE

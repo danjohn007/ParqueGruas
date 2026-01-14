@@ -19,7 +19,8 @@ class AuditLog extends Model {
             $username = $user ? $user['username'] : null;
         }
         
-        $ipAddress = $_SERVER['REMOTE_ADDR'] ?? null;
+        // Get IP address considering proxies
+        $ipAddress = $this->getClientIP();
         $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? null;
         
         $data = [
@@ -135,5 +136,34 @@ class AuditLog extends Model {
             WHERE created_at < DATE_SUB(NOW(), INTERVAL ? DAY)
         ");
         return $stmt->execute([$days]);
+    }
+    
+    // Obtener IP real del cliente considerando proxies
+    private function getClientIP() {
+        $ipAddress = '';
+        
+        // Check for shared internet/ISP IP
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ipAddress = $_SERVER['HTTP_CLIENT_IP'];
+        }
+        // Check for IPs passing through proxies
+        elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            // X-Forwarded-For can contain multiple IPs, get the first one
+            $ipList = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ipAddress = trim($ipList[0]);
+        }
+        elseif (!empty($_SERVER['HTTP_X_REAL_IP'])) {
+            $ipAddress = $_SERVER['HTTP_X_REAL_IP'];
+        }
+        else {
+            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? '';
+        }
+        
+        // Validate IP format
+        if (filter_var($ipAddress, FILTER_VALIDATE_IP) === false) {
+            $ipAddress = $_SERVER['REMOTE_ADDR'] ?? 'UNKNOWN';
+        }
+        
+        return $ipAddress;
     }
 }

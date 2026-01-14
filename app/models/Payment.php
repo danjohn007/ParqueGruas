@@ -178,7 +178,12 @@ class Payment extends Model {
         
         try {
             // Crear el pago
-            $this->create($paymentData);
+            $result = $this->create($paymentData);
+            
+            if (!$result) {
+                throw new Exception('Failed to create payment record');
+            }
+            
             $paymentId = $this->db->lastInsertId();
             
             // Actualizar el impound
