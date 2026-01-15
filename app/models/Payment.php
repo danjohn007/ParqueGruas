@@ -8,16 +8,22 @@ require_once __DIR__ . '/Model.php';
 class Payment extends Model {
     protected $table = 'payments';
     
-    // Obtener con detalles del impound
+    // Obtener con detalles del impound, servicio o factura
     public function getAllWithDetails() {
         $stmt = $this->db->query("
             SELECT p.*, 
-                   i.folio, i.vehicle_id,
+                   i.folio as impound_folio, 
+                   s.folio as service_folio,
+                   inv.invoice_number,
                    v.plate, v.owner_name,
-                   u.full_name as user_name
+                   u.full_name as user_name,
+                   c.business_name as company_name
             FROM {$this->table} p
             LEFT JOIN impounds i ON p.impound_id = i.id
+            LEFT JOIN services s ON p.service_id = s.id
+            LEFT JOIN invoices inv ON p.invoice_id = inv.id
             LEFT JOIN vehicles v ON i.vehicle_id = v.id
+            LEFT JOIN companies c ON inv.company_id = c.id
             LEFT JOIN users u ON p.user_id = u.id
             ORDER BY p.payment_date DESC
         ");
@@ -28,12 +34,18 @@ class Payment extends Model {
     public function getByIdWithDetails($id) {
         $stmt = $this->db->prepare("
             SELECT p.*, 
-                   i.folio, i.total_amount as impound_total,
+                   i.folio as impound_folio, i.total_amount as impound_total,
+                   s.folio as service_folio, s.total_amount as service_total,
+                   inv.invoice_number, inv.total_amount as invoice_total,
                    v.plate, v.brand, v.model, v.owner_name,
+                   c.business_name as company_name,
                    u.full_name as user_name
             FROM {$this->table} p
             LEFT JOIN impounds i ON p.impound_id = i.id
+            LEFT JOIN services s ON p.service_id = s.id
+            LEFT JOIN invoices inv ON p.invoice_id = inv.id
             LEFT JOIN vehicles v ON i.vehicle_id = v.id
+            LEFT JOIN companies c ON inv.company_id = c.id
             LEFT JOIN users u ON p.user_id = u.id
             WHERE p.id = ?
         ");
@@ -62,6 +74,92 @@ class Payment extends Model {
         return 'REC-' . $year . '-' . str_pad($number, 3, '0', STR_PAD_LEFT);
     }
     
+    // Registrar pago de servicio
+    public function registerServicePayment($serviceId, $amount, $method, $cashier, $userId, $referenceNumber = null) {
+        $receiptNumber = $this->generateReceiptNumber();
+        
+        $paymentData = [
+            'service_id' => $serviceId,
+            'receipt_number' => $receiptNumber,
+            'payment_method' => $method,
+            'payment_type' => 'service',
+            'reference_number' => $referenceNumber,
+            'amount' => $amount,
+            'payment_date' => date('Y-m-d H:i:s'),
+            'cashier_name' => $cashier,
+            'user_id' => $userId
+        ];
+        
+        $this->db->beginTransaction();
+        
+        try {
+            $this->create($paymentData);
+            $paymentId = $this->db->lastInsertId();
+            
+            // Actualizar estado del servicio a 'cobrado'
+            $stmt = $this->db->prepare("UPDATE services SET status = 'cobrado' WHERE id = ?");
+            $stmt->execute([$serviceId]);
+            
+            $this->db->commit();
+            return $paymentId;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+    
+    // Registrar pago de factura
+    public function registerInvoicePayment($invoiceId, $amount, $method, $cashier, $userId, $referenceNumber = null) {
+        $receiptNumber = $this->generateReceiptNumber();
+        
+        // Obtener factura
+        $stmt = $this->db->prepare("SELECT * FROM invoices WHERE id = ?");
+        $stmt->execute([$invoiceId]);
+        $invoice = $stmt->fetch();
+        
+        if (!$invoice) return false;
+        
+        $remainingBalance = $invoice['total_amount'] - $amount;
+        
+        $paymentData = [
+            'invoice_id' => $invoiceId,
+            'receipt_number' => $receiptNumber,
+            'payment_method' => $method,
+            'payment_type' => 'invoice',
+            'reference_number' => $referenceNumber,
+            'amount' => $amount,
+            'remaining_balance' => $remainingBalance,
+            'payment_date' => date('Y-m-d H:i:s'),
+            'cashier_name' => $cashier,
+            'user_id' => $userId
+        ];
+        
+        $this->db->beginTransaction();
+        
+        try {
+            $this->create($paymentData);
+            $paymentId = $this->db->lastInsertId();
+            
+            // Si pago completo, actualizar estado de factura
+            if ($remainingBalance <= 0) {
+                $stmt = $this->db->prepare("UPDATE invoices SET status = 'pagada' WHERE id = ?");
+                $stmt->execute([$invoiceId]);
+                
+                // Actualizar servicio relacionado
+                if ($invoice['service_id']) {
+                    $stmt = $this->db->prepare("UPDATE services SET status = 'cobrado' WHERE id = ?");
+                    $stmt->execute([$invoice['service_id']]);
+                }
+            }
+            
+            $this->db->commit();
+            return $paymentId;
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            return false;
+        }
+    }
+    
     // Registrar pago
     public function registerPayment($impoundId, $amount, $method, $cashier, $userId) {
         $receiptNumber = $this->generateReceiptNumber();
@@ -80,7 +178,12 @@ class Payment extends Model {
         
         try {
             // Crear el pago
-            $this->create($paymentData);
+            $result = $this->create($paymentData);
+            
+            if (!$result) {
+                throw new Exception('Failed to create payment record');
+            }
+            
             $paymentId = $this->db->lastInsertId();
             
             // Actualizar el impound
@@ -103,11 +206,17 @@ class Payment extends Model {
     public function getByPeriod($dateFrom, $dateTo) {
         $stmt = $this->db->prepare("
             SELECT p.*, 
-                   i.folio,
-                   v.plate, v.owner_name
+                   i.folio as impound_folio,
+                   s.folio as service_folio,
+                   inv.invoice_number,
+                   v.plate, v.owner_name,
+                   c.business_name as company_name
             FROM {$this->table} p
             LEFT JOIN impounds i ON p.impound_id = i.id
+            LEFT JOIN services s ON p.service_id = s.id
+            LEFT JOIN invoices inv ON p.invoice_id = inv.id
             LEFT JOIN vehicles v ON i.vehicle_id = v.id
+            LEFT JOIN companies c ON inv.company_id = c.id
             WHERE DATE(p.payment_date) BETWEEN ? AND ?
             ORDER BY p.payment_date DESC
         ");
